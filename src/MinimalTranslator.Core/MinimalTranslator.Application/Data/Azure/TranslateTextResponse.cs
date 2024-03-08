@@ -1,4 +1,4 @@
-namespace MinimalTranslator.Api.Data.Azure;
+namespace MinimalTranslator.Application.Data.Azure;
 
 // https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-translate#response-body
 public class TranslatedTextResponse

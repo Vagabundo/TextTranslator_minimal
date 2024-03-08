@@ -1,7 +1,7 @@
+using System.Net.Http.Json;
 using System.Text;
-using Microsoft.Extensions.Options;
-using MinimalTranslator.Api.Data;
-using MinimalTranslator.Api.Data.Azure;
+using MinimalTranslator.Application.Config;
+using MinimalTranslator.Application.Data.Azure;
 using MinimalTranslator.Application.Interfaces;
 using Newtonsoft.Json;
 
@@ -9,13 +9,11 @@ namespace MinimalTranslator.Application.Services;
 
 public class AzureHttpTextTranslatorService : ITextTranslatorService
 {
-    private readonly IHttpClientFactory _clientFactory;
     private readonly AzureHttpConfig _settings;
 
-    public AzureHttpTextTranslatorService (IHttpClientFactory clientFactory, IOptions<AzureHttpConfig> settings)
+    public AzureHttpTextTranslatorService (AzureHttpConfig settings)
     {
-        _clientFactory = clientFactory;
-        _settings = settings.Value;
+        _settings = settings;
     }
 
     public async Task<string> Translate(string text, string sourceLanguage, string targetLanguage)
@@ -25,7 +23,7 @@ public class AzureHttpTextTranslatorService : ITextTranslatorService
         object[] body = { new { Text = text } };
         var requestBody = JsonConvert.SerializeObject(body);
 
-        using (var client = _clientFactory.CreateClient())
+        using (var client = new HttpClient())
         using (var request = new HttpRequestMessage())
         {
             request.Method = HttpMethod.Post;

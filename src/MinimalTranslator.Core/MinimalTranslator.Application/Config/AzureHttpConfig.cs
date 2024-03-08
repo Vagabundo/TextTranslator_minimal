@@ -1,4 +1,4 @@
-namespace MinimalTranslator.Api.Data;
+namespace MinimalTranslator.Application.Config;
 
 public class AzureHttpConfig 
 {

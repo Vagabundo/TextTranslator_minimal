@@ -2,7 +2,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using MinimalTranslator.Application.Interfaces;
 using MinimalTranslator.Core.Domain;
 
-namespace MinimalTranslator.Persistance.Database;
+namespace MinimalTranslator.Database;
 
 public class TranslationCacheRepository : ITranslationRepository
 {

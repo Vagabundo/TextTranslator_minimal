@@ -1,21 +1,19 @@
 using System.Text;
 using Newtonsoft.Json;
 using MinimalTranslator.Application.Interfaces;
-using MinimalTranslator.Api.Data;
-using Microsoft.Extensions.Options;
-using MinimalTranslator.Api.Data.Azure;
+using MinimalTranslator.Application.Config;
+using System.Net.Http.Json;
+using MinimalTranslator.Application.Data.Azure;
 
 namespace MinimalTranslator.Application.Services;
 
 public class AzureHttpTextAnalyticService : ITextAnalyticService
 {
-    private readonly IHttpClientFactory _clientFactory;
     private readonly AzureHttpConfig _settings;
 
-    public AzureHttpTextAnalyticService (IHttpClientFactory clientFactory, IOptions<AzureHttpConfig> settings)
+    public AzureHttpTextAnalyticService (AzureHttpConfig settings)
     {
-        _clientFactory = clientFactory;
-        _settings = settings.Value;
+        _settings = settings;
     }
 
     public async Task<string> GetLanguage(string text)
@@ -25,7 +23,7 @@ public class AzureHttpTextAnalyticService : ITextAnalyticService
         object[] body = new object[] { new { Text = text } };
         var requestBody = JsonConvert.SerializeObject(body);
 
-        using (var client = _clientFactory.CreateClient())
+        using (var client = new HttpClient())
         using (var request = new HttpRequestMessage())
         {
             request.Method = HttpMethod.Post;

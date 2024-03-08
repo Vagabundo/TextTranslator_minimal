@@ -3,9 +3,10 @@ using System.Text;
 using MinimalTranslator.Api.ApiData;
 using MinimalTranslator.Application.Interfaces;
 using MinimalTranslator.Application.Services;
-using MinimalTranslator.Persistance.Database;
+using MinimalTranslator.Database;
 using MinimalTranslator.Core.Domain;
 using MinimalTranslator.Api.Data;
+using MinimalTranslator.Application.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +19,8 @@ builder.Services.AddStackExchangeRedisCache(redisOptions =>
 builder.Services.AddScoped<ITranslationService, TranslationService>();
 
 // When using HttpServices
-builder.Services.AddHttpClient();
-builder.Services.Configure<AzureHttpConfig>(builder.Configuration.GetSection("Azure:Http"));
+AzureHttpConfig azureHttpConfig = builder.Configuration.GetSection("Azure:Http").Get<AzureHttpConfig>();
+builder.Services.AddSingleton(azureHttpConfig);
 builder.Services.AddScoped<ITextAnalyticService, AzureHttpTextAnalyticService>();
 builder.Services.AddScoped<ITextTranslatorService, AzureHttpTextTranslatorService>();
 

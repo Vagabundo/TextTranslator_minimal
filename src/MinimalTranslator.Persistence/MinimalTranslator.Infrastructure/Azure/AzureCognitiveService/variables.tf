@@ -1,5 +1,5 @@
 variable "project_name" {
-  default = "mini_translator-api"
+  default = "mini-translator-api"
 }
 
 variable "location" {
