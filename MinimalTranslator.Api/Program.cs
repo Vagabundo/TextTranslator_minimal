@@ -81,7 +81,9 @@ app.MapGet("/{id}",
             var guid = new Guid(id);
             var translation = await translationService.Get(guid);
 
-            return translation is null ? Results.BadRequest("Translation not found") : Results.Ok(translation.TranslatedText);
+            return translation is null || translation.TranslatedText is null
+            ? Results.BadRequest("Translation not found")
+            : Results.Ok(translation.TranslatedText);
         }
         catch (Exception ex) when (ex is ArgumentNullException || ex is FormatException || ex is OverflowException)
         {
