@@ -26,22 +26,27 @@ builder.Services.AddScoped<ITextTranslatorService, AzureHttpTextTranslatorServic
 // Persistence
 builder.Services.AddScoped<ITranslationRepository, TranslationCacheRepository>();
 
+
+LanguageConfig languageConfig = new () { TargetLanguage = builder.Configuration.GetValue<string>("Language") ?? "es" };
+builder.Services.AddSingleton(languageConfig);
+
 var app = builder.Build();
 
 app.MapPost("/",
     async (TranslationRequest request,
         ILogger<WebApplication> logger,
+        LanguageConfig languageConfig,
         ITextAnalyticService textAnalyticsService,
         ITextTranslatorService textTranslatorService,
         ITranslationService translationService) =>
     {
-        if (string.IsNullOrEmpty(request.Text))
-        {
-            return Results.BadRequest("Text cannot be empty");
-        }
-
         try
         {
+            if (string.IsNullOrEmpty(request.Text))
+            {
+                return Results.BadRequest("Text cannot be empty");
+            }
+
             byte[] hashBytes = SHA256.Create()
                 .ComputeHash(Encoding.UTF8.GetBytes(request.Text))
                 .Take(16)
@@ -53,7 +58,8 @@ app.MapPost("/",
             var trans = new Translation
                 {
                     Id = id,
-                    TranslatedText = language == "es" ? request.Text : await textTranslatorService.Translate(request.Text, language, "es")
+                    TranslatedText = language == languageConfig.TargetLanguage ? request.Text
+                                    : await textTranslatorService.Translate(request.Text, language, languageConfig.TargetLanguage)
                 };
 
             await translationService.Add(trans);
