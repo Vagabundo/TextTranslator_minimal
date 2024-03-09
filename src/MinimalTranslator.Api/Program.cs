@@ -40,7 +40,7 @@ builder.Services.AddSingleton(languageConfig);
 
 var app = builder.Build();
 
-app.MapPost("/",
+app.MapPost("/translation",
     async (TranslationRequest request,
         ILogger<WebApplication> logger,
         LanguageConfig languageConfig,
@@ -84,7 +84,7 @@ app.MapPost("/",
         }
     });
 
-app.MapGet("/{id}",
+app.MapGet("/translation/{id}",
     async (string id, ILogger<WebApplication> logger, ITranslationService translationService) =>
     {
         try

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minimaltranslator-api
+spec:
+  selector:
+    matchLabels:
+      app: minimaltranslator-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: minimaltranslator-api
+    spec:
+      containers:
+        - name: minimaltranslator-api
+          image: vagabundocker/mini-translator-api
+          # env:
+          # - name: MY_VAR
+          #   value: "roberto"
+          resources:
+            # requests:
+            #   memory: "64Mi"
+            #   cpu: "200m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+          - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vagatranslator-api-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: minimaltranslator-api

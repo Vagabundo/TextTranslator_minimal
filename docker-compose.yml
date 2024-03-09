@@ -20,11 +20,11 @@ services:
   translator:
     depends_on:
     - redis
-    image: minimaltranslator-api
+    image: minimaltranslator
     container_name: minimaltranslator-api
     build:
       context: .
-      dockerfile: MinimalTranslator.Api/Dockerfile
+      dockerfile: src/MinimalTranslator.Api/Dockerfile
     ports:
       - 5000:5000
 

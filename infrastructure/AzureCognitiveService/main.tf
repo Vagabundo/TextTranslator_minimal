@@ -1,4 +1,3 @@
-# Configure the Azure provider
 terraform {
   required_providers {
     azurerm = {
@@ -19,7 +18,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
+  name     = "${var.project_name}-${var.environment}"
   location = var.location
 
   tags = {
@@ -29,7 +28,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_cognitive_account" "translator_cognitive_service" {
-  name                = "${var.resource_group_name}-translation-cognitiveservices"
+  name                = "${azurerm_resource_group.rg.name}-translator-cognitiveservices"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   kind                = "TextTranslation"
