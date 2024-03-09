@@ -1,28 +1,31 @@
-using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.EntityFrameworkCore;
 using MinimalTranslator.Application.Interfaces;
-using MinimalTranslator.Core.Domain;
+using MinimalTranslator.Domain;
 
-namespace MinimalTranslator.Database;
+namespace MinimalTranslator.Database.Repositories;
 
-public class TranslationCacheRepository : ITranslationRepository
+public class TranslationRepository : ITranslationRepository
 {
-    private readonly IDistributedCache _cacheDb;
+    private readonly InMemoryContext _dbContext;
 
-    public TranslationCacheRepository (IDistributedCache cacheDb)
+    public TranslationRepository(InMemoryContext dbContext)
     {
-        _cacheDb = cacheDb;
+        _dbContext = dbContext;
     }
-
+    
     public async Task Add(Translation translation)
     {
-        if (!string.IsNullOrEmpty(translation.TranslatedText))
+        if (!string.IsNullOrEmpty(translation.TranslatedText) && (await Get(translation.Id)) is null)
         {
-            await _cacheDb.SetStringAsync(translation.Id.ToString(), translation.TranslatedText);
+            await _dbContext.Translations.AddAsync(translation);
+            await _dbContext.SaveChangesAsync();
         }
     }
 
-    public async Task<Translation> Get(Guid id)
+    public async Task<Translation?> Get(Guid id)
     {
-        return new () { Id = id, TranslatedText = await _cacheDb.GetStringAsync(id.ToString()) };
+        return await _dbContext.Translations
+            .Where(x => x.Id == id)
+            .FirstOrDefaultAsync();
     }
 }

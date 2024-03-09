@@ -1,5 +1,5 @@
 using MinimalTranslator.Application.Interfaces;
-using MinimalTranslator.Core.Domain;
+using MinimalTranslator.Domain;
 
 namespace MinimalTranslator.Application.Services;
 

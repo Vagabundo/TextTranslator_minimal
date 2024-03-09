@@ -46,12 +46,12 @@
             "dockerBuild": {
                 "tag": "minimaltranslator:dev",
                 "target": "base",
-                "dockerfile": "${workspaceFolder}/MinimalTranslator.Api/Dockerfile",
+                "dockerfile": "${workspaceFolder}Dockerfile",
                 "context": "${workspaceFolder}",
                 "pull": true
             },
             "netCore": {
-                "appProject": "${workspaceFolder}/MinimalTranslator.Api/MinimalTranslator.Api.csproj"
+                "appProject": "${workspaceFolder}/src/MinimalTranslator.Api/MinimalTranslator.Api.csproj"
             }
         },
         {
@@ -62,7 +62,7 @@
             ],
             "dockerBuild": {
                 "tag": "minimaltranslator:latest",
-                "dockerfile": "${workspaceFolder}/MinimalTranslator.Api/Dockerfile",
+                "dockerfile": "${workspaceFolder}Dockerfile",
                 "context": "${workspaceFolder}",
                 "platform": {
                     "os": "linux",
@@ -71,7 +71,7 @@
                 "pull": true
             },
             "netCore": {
-                "appProject": "${workspaceFolder}/MinimalTranslator.Api/MinimalTranslator.Api.csproj"
+                "appProject": "${workspaceFolder}/src/MinimalTranslator.Api/MinimalTranslator.Api.csproj"
             }
         },
         {
@@ -82,7 +82,7 @@
             ],
             "dockerRun": {},
             "netCore": {
-                "appProject": "${workspaceFolder}/MinimalTranslator.Api/MinimalTranslator.Api.csproj",
+                "appProject": "${workspaceFolder}/src/MinimalTranslator.Api/MinimalTranslator.Api.csproj",
                 "enableDebugging": true
             }
         },
@@ -94,7 +94,7 @@
             ],
             "dockerRun": {},
             "netCore": {
-                "appProject": "${workspaceFolder}/MinimalTranslator.Api/MinimalTranslator.Api.csproj"
+                "appProject": "${workspaceFolder}/src/MinimalTranslator.Api/MinimalTranslator.Api.csproj"
             }
         }
     ]

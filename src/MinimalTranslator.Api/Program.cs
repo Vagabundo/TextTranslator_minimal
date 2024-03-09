@@ -4,15 +4,22 @@ using MinimalTranslator.Api.ApiData;
 using MinimalTranslator.Application.Interfaces;
 using MinimalTranslator.Application.Services;
 using MinimalTranslator.Database;
-using MinimalTranslator.Core.Domain;
+using MinimalTranslator.Domain;
 using MinimalTranslator.Api.Data;
 using MinimalTranslator.Application.Config;
+using Microsoft.EntityFrameworkCore;
+using MinimalTranslator.Database.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddStackExchangeRedisCache(redisOptions =>
+// builder.Services.AddStackExchangeRedisCache(redisOptions =>
+// {
+//     redisOptions.Configuration = builder.Configuration.GetConnectionString("Redis");
+// });
+
+builder.Services.AddDbContextPool<InMemoryContext>(options => 
 {
-    redisOptions.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.UseInMemoryDatabase("InMemoryTranslationsDatabase");
 });
 
 // Application
@@ -25,7 +32,7 @@ builder.Services.AddScoped<ITextAnalyticService, AzureHttpTextAnalyticService>()
 builder.Services.AddScoped<ITextTranslatorService, AzureHttpTextTranslatorService>();
 
 // Persistence
-builder.Services.AddScoped<ITranslationRepository, TranslationCacheRepository>();
+builder.Services.AddScoped<ITranslationRepository, TranslationRepository>();
 
 
 LanguageConfig languageConfig = new () { TargetLanguage = builder.Configuration.GetValue<string>("Language") ?? "es" };
@@ -59,6 +66,9 @@ app.MapPost("/",
             var trans = new Translation
                 {
                     Id = id,
+                    LanguageFrom = language,
+                    OriginalText = request.Text,
+                    LanguageTo = languageConfig.TargetLanguage,
                     TranslatedText = language == languageConfig.TargetLanguage ? request.Text
                                     : await textTranslatorService.Translate(request.Text, language, languageConfig.TargetLanguage)
                 };

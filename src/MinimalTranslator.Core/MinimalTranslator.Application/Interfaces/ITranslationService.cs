@@ -1,4 +1,4 @@
-using MinimalTranslator.Core.Domain;
+using MinimalTranslator.Domain;
 
 namespace MinimalTranslator.Application.Interfaces;
 
