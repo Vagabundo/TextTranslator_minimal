@@ -1,6 +1,5 @@
 using Azure;
 using Azure.AI.TextAnalytics;
-using MinimalTranslator.Application.Config;
 using MinimalTranslator.Application.Interfaces;
 
 namespace MinimalTranslator.Application.Services;
@@ -9,11 +8,11 @@ public class AzureTextAnalyticService : ITextAnalyticService
 {
     private TextAnalyticsClient _azureTextAnalyticsClient;
 
-    public AzureTextAnalyticService (AzureApiConfig config)
+    public AzureTextAnalyticService (string uri, string key)
     {
         _azureTextAnalyticsClient = new TextAnalyticsClient(
-            new Uri(config.TextAnalytics.Uri),
-            new AzureKeyCredential(config.TextAnalytics.Key)
+            new Uri(uri),
+            new AzureKeyCredential(key)
         );
     }
 

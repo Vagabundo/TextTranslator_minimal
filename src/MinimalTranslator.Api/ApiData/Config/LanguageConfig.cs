@@ -1,4 +1,4 @@
-namespace MinimalTranslator.Api.Data;
+namespace MinimalTranslator.Api.Config;
 
 public class LanguageConfig
 {

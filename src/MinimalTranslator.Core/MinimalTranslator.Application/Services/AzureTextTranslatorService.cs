@@ -1,6 +1,5 @@
 using Azure;
 using Azure.AI.Translation.Text;
-using MinimalTranslator.Application.Config;
 using MinimalTranslator.Application.Interfaces;
 
 namespace MinimalTranslator.Application.Services;
@@ -8,11 +7,11 @@ namespace MinimalTranslator.Application.Services;
 public class AzureTextTranslatorService : ITextTranslatorService
 {
     private TextTranslationClient _azureTextTranslatorClient;
-    public AzureTextTranslatorService (AzureApiConfig config)
+    public AzureTextTranslatorService (string uri, string key)
     {
         _azureTextTranslatorClient = new TextTranslationClient(
-            new AzureKeyCredential(config.TextTranslator.Key),
-            new Uri(config.TextTranslator.Uri)
+            new AzureKeyCredential(key),
+            new Uri(uri)
         );
     }
 

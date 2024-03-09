@@ -1,7 +1,6 @@
 using System.Text;
 using Newtonsoft.Json;
 using MinimalTranslator.Application.Interfaces;
-using MinimalTranslator.Application.Config;
 using System.Net.Http.Json;
 using MinimalTranslator.Application.Data.Azure;
 
@@ -9,11 +8,15 @@ namespace MinimalTranslator.Application.Services;
 
 public class AzureHttpTextAnalyticService : ITextAnalyticService
 {
-    private readonly AzureHttpConfig _settings;
+    private readonly string _uri;
+    private readonly string _region;
+    private readonly string _key;
 
-    public AzureHttpTextAnalyticService (AzureHttpConfig settings)
+    public AzureHttpTextAnalyticService (string uri, string region, string key)
     {
-        _settings = settings;
+        _uri = uri;
+        _region = region;
+        _key = key;
     }
 
     public async Task<string> GetLanguage(string text)
@@ -27,10 +30,10 @@ public class AzureHttpTextAnalyticService : ITextAnalyticService
         using (var request = new HttpRequestMessage())
         {
             request.Method = HttpMethod.Post;
-            request.RequestUri = new Uri(_settings.Uri + route);
+            request.RequestUri = new Uri(_uri + route);
             request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-            request.Headers.Add("Ocp-Apim-Subscription-Key", _settings.Key);
-            request.Headers.Add("Ocp-Apim-Subscription-Region", _settings.Region);
+            request.Headers.Add("Ocp-Apim-Subscription-Key", _key);
+            request.Headers.Add("Ocp-Apim-Subscription-Region", _region);
 
             HttpResponseMessage response = await client.SendAsync(request).ConfigureAwait(false);
 

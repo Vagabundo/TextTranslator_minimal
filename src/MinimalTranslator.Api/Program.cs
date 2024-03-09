@@ -5,10 +5,9 @@ using MinimalTranslator.Application.Interfaces;
 using MinimalTranslator.Application.Services;
 using MinimalTranslator.Database;
 using MinimalTranslator.Domain;
-using MinimalTranslator.Api.Data;
-using MinimalTranslator.Application.Config;
 using Microsoft.EntityFrameworkCore;
 using MinimalTranslator.Database.Repositories;
+using MinimalTranslator.Api.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,9 +26,14 @@ builder.Services.AddScoped<ITranslationService, TranslationService>();
 
 // When using HttpServices
 AzureHttpConfig azureHttpConfig = builder.Configuration.GetSection("Azure:Http").Get<AzureHttpConfig>();
-builder.Services.AddSingleton(azureHttpConfig);
-builder.Services.AddScoped<ITextAnalyticService, AzureHttpTextAnalyticService>();
-builder.Services.AddScoped<ITextTranslatorService, AzureHttpTextTranslatorService>();
+builder.Services.AddScoped<ITextTranslatorService>(serviceProvider =>
+{
+    return new AzureHttpTextTranslatorService(azureHttpConfig.Uri, azureHttpConfig.Region, azureHttpConfig.Key);
+});
+builder.Services.AddScoped<ITextAnalyticService>(serviceProvider =>
+{
+    return new AzureHttpTextAnalyticService(azureHttpConfig.Uri, azureHttpConfig.Region, azureHttpConfig.Key);
+});
 
 // Persistence
 builder.Services.AddScoped<ITranslationRepository, TranslationRepository>();

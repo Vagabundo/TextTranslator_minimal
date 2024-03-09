@@ -1,6 +1,5 @@
 using System.Net.Http.Json;
 using System.Text;
-using MinimalTranslator.Application.Config;
 using MinimalTranslator.Application.Data.Azure;
 using MinimalTranslator.Application.Interfaces;
 using Newtonsoft.Json;
@@ -9,11 +8,15 @@ namespace MinimalTranslator.Application.Services;
 
 public class AzureHttpTextTranslatorService : ITextTranslatorService
 {
-    private readonly AzureHttpConfig _settings;
+    private readonly string _uri;
+    private readonly string _region;
+    private readonly string _key;
 
-    public AzureHttpTextTranslatorService (AzureHttpConfig settings)
+    public AzureHttpTextTranslatorService (string uri, string region, string key)
     {
-        _settings = settings;
+        _uri = uri;
+        _region = region;
+        _key = key;
     }
 
     public async Task<string> Translate(string text, string sourceLanguage, string targetLanguage)
@@ -27,10 +30,10 @@ public class AzureHttpTextTranslatorService : ITextTranslatorService
         using (var request = new HttpRequestMessage())
         {
             request.Method = HttpMethod.Post;
-            request.RequestUri = new Uri(_settings.Uri + route);
+            request.RequestUri = new Uri(_uri + route);
             request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-            request.Headers.Add("Ocp-Apim-Subscription-Key", _settings.Key);
-            request.Headers.Add("Ocp-Apim-Subscription-Region", _settings.Region);
+            request.Headers.Add("Ocp-Apim-Subscription-Key", _key);
+            request.Headers.Add("Ocp-Apim-Subscription-Region", _region);
 
             HttpResponseMessage response = await client.SendAsync(request).ConfigureAwait(false);
 

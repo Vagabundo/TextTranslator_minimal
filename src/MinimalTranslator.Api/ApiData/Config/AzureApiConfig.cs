@@ -1,4 +1,4 @@
-namespace MinimalTranslator.Application.Config;
+namespace MinimalTranslator.Api.Config;
 
 public class AzureApiConfig 
 {
