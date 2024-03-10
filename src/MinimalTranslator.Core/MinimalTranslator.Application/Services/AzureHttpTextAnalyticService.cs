@@ -1,8 +1,8 @@
-using System.Text;
-using Newtonsoft.Json;
-using MinimalTranslator.Application.Interfaces;
-using System.Net.Http.Json;
 using MinimalTranslator.Application.Data.Azure;
+using MinimalTranslator.Application.Interfaces;
+using Newtonsoft.Json;
+using System.Net.Http.Json;
+using System.Text;
 
 namespace MinimalTranslator.Application.Services;
 

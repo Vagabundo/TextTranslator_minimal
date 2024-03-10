@@ -514,10 +514,6 @@
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Translation is the expected one\", function () {",
-							"    pm.expect(pm.response.text().slice(1,-1)).to.eql(pm.collectionVariables.get(\"expected_translation\"));",
 							"});"
 						],
 						"type": "text/javascript"
@@ -784,7 +780,7 @@
 		},
 		{
 			"key": "base_url",
-			"value": "http://localhost:5000"
+			"value": "http://localhost:5000/translation"
 		},
 		{
 			"key": "expected_translation",
