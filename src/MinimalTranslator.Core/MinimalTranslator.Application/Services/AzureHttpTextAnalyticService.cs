@@ -37,7 +37,10 @@ public class AzureHttpTextAnalyticService : ITextAnalyticService
 
             HttpResponseMessage response = await client.SendAsync(request).ConfigureAwait(false);
 
-            if (!response.IsSuccessStatusCode) return "";
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("External service failed to detect text language");
+            }
 
             var result = await response.Content.ReadFromJsonAsync<IReadOnlyList<DetectedLanguageResponse>>();
 

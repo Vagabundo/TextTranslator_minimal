@@ -37,7 +37,10 @@ public class AzureHttpTextTranslatorService : ITextTranslatorService
 
             HttpResponseMessage response = await client.SendAsync(request).ConfigureAwait(false);
 
-            if (!response.IsSuccessStatusCode) return "";
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("External service failed to translate text");
+            }
 
             var result = await response.Content.ReadFromJsonAsync<IReadOnlyList<TranslatedTextResponse>>();
 
