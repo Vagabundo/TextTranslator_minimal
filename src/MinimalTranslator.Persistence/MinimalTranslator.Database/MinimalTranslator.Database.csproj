@@ -10,7 +10,6 @@
     <ProjectReference Include="..\..\MinimalTranslator.Core\MinimalTranslator.Application\MinimalTranslator.Application.csproj" />
     
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.2" />
   </ItemGroup>
 
 </Project>

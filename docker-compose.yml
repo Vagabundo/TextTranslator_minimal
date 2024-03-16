@@ -3,33 +3,11 @@
 version: '3.4'
 
 services:
-  redis:
-    image: redis:latest
-    container_name: minimaltranslator-redis
-    restart: always
-    ports:
-      - 6379:6379
-    environment:
-      - REDIS_PASSWORD=myLocalSecret
-      # - REDIS_PASSWORD=/run/secrets/db_password
-      - REDIS_PORT=6379
-      - REDIS_DATABASES=16
-    # secrets:
-    #   - db_password
-
   translator:
-    depends_on:
-    - redis
     image: minimaltranslator
     container_name: minimaltranslator-api
     build:
       context: .
       dockerfile: src/MinimalTranslator.Api/Dockerfile
     ports:
-      - 5000:5000
-
-
-
-# secrets:
-#    db_password:
-#      file: db_password.txt
+      - 8080:8080
