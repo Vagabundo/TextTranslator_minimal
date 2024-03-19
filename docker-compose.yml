@@ -8,6 +8,6 @@ services:
     container_name: minimaltranslator-api
     build:
       context: .
-      dockerfile: src/MinimalTranslator.Api/Dockerfile
+      dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - 5000:8080

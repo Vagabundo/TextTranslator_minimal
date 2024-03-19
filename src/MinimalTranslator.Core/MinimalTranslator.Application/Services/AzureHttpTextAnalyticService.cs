@@ -1,29 +1,27 @@
 using MinimalTranslator.Application.Data.Azure;
 using MinimalTranslator.Application.Interfaces;
+using MinimalTranslator.SharedKernel;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 using System.Text;
 
 namespace MinimalTranslator.Application.Services;
 
-public class AzureHttpTextAnalyticService : ITextAnalyticService
+public class AzureHttpTextAnalyticService : AzureHttpServiceBase, ITextAnalyticService
 {
-    private readonly string _uri;
-    private readonly string _region;
-    private readonly string _key;
-
-    public AzureHttpTextAnalyticService (string uri, string region, string key)
+    public AzureHttpTextAnalyticService (string uri, string region, string key, float languageRecognitionScoreThreshold)
     {
         _uri = uri;
         _region = region;
         _key = key;
+        _languageRecognitionScoreThreshold = languageRecognitionScoreThreshold;
     }
 
-    public async Task<string> GetLanguage(string text)
+    public async Task<Result<string>> GetLanguage(string text)
     {
         string route = "/detect?api-version=3.0";
 
-        object[] body = new object[] { new { Text = text } };
+        object[] body = { new { Text = text } };
         var requestBody = JsonConvert.SerializeObject(body);
 
         using (var client = new HttpClient())
@@ -32,19 +30,30 @@ public class AzureHttpTextAnalyticService : ITextAnalyticService
             request.Method = HttpMethod.Post;
             request.RequestUri = new Uri(_uri + route);
             request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-            request.Headers.Add("Ocp-Apim-Subscription-Key", _key);
-            request.Headers.Add("Ocp-Apim-Subscription-Region", _region);
+            request.Headers.Add(KeyHeaderName, _key);
+            request.Headers.Add(RegionHeaderName, _region);
 
             HttpResponseMessage response = await client.SendAsync(request).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception("External service failed to detect text language");
+                return Result.Failure<string>(DetectedLanguageResponseErrors.ExternalFailure);
             }
 
             var result = await response.Content.ReadFromJsonAsync<IReadOnlyList<DetectedLanguageResponse>>();
 
-            return result?.First().Language ?? "";
+            if (result is null || !result.Any() || result.First().Score < _languageRecognitionScoreThreshold)
+            {
+                return Result.Failure<string>(DetectedLanguageResponseErrors.LanguageNotRecognized);
+            }
+
+            var language = result?.First().Language;
+            if (string.IsNullOrEmpty(language))
+            {
+                return Result.Failure<string>(DetectedLanguageResponseErrors.EmptyLanguage);
+            }
+
+            return language;
         }
     }
 }

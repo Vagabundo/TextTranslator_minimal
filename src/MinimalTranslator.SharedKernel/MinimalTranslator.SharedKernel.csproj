@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\MinimalTranslator.SharedKernel\MinimalTranslator.SharedKernel.csproj" />
-  </ItemGroup>
-
 </Project>

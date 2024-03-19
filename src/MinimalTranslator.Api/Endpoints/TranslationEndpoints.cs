@@ -1,5 +1,6 @@
 using MinimalTranslator.Api.ApiData;
 using MinimalTranslator.Api.Config;
+using MinimalTranslator.Api.Extensions;
 using MinimalTranslator.Application.Interfaces;
 
 namespace MinimalTranslator.Api;
@@ -16,14 +17,9 @@ public static class TranslationEndpoints
         {
             try
             {
-                if (string.IsNullOrEmpty(request.Text))
-                {
-                    return Results.BadRequest("Text cannot be empty");
-                }
+                var result = await translationService.Add(request.Text, languageConfig.TargetLanguage);
 
-                Guid id = await translationService.Add(request.Text, languageConfig.TargetLanguage);
-
-                return Results.Ok(id);
+                return result.IsSuccess ? Results.Ok(result.Value) : result.ToProblemDetails();
             }
             catch (Exception ex)
             {
@@ -41,11 +37,9 @@ public static class TranslationEndpoints
             try
             {
                 var guid = new Guid(id);
-                var translation = await translationService.Get(guid, languageConfig.TargetLanguage);
+                var result = await translationService.Get(guid, languageConfig.TargetLanguage);
 
-                return translation is null || translation.TranslatedText is null
-                ? Results.BadRequest("Translation not found")
-                : Results.Ok(translation.TranslatedText);
+                return result.IsSuccess ? Results.Ok(result.Value.TranslatedText) : result.ToProblemDetails();
             }
             catch (Exception ex) when (ex is ArgumentNullException || ex is FormatException || ex is OverflowException)
             {

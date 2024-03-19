@@ -1,7 +1,7 @@
-using System.Security.Cryptography;
-using System.Text;
+using MinimalTranslator.Application.Extensions;
 using MinimalTranslator.Application.Interfaces;
 using MinimalTranslator.Domain;
+using MinimalTranslator.Domain.Translations;
 using MinimalTranslator.SharedKernel;
 
 namespace MinimalTranslator.Application.Services;
@@ -19,50 +19,64 @@ public class TranslationService : ITranslationService
         _textTranslatorService = textTranslatorService;
     }
 
-    public async Task<Guid> Add(string text, string targetLanguage)
+    public async Task<Result<Guid>> Add(string text, string targetLanguage)
     {
-        Guid id = await GetHashedId(text);
-        var translationEntity = await Get(id, targetLanguage);
-
-        if (translationEntity is null)
+        if (string.IsNullOrEmpty(text))
         {
-            var language = await _textAnalyticsService.GetLanguage(text);
-            await Add(new Translation
+            return Result.Failure<Guid>(TranslationErrors.NoText);
+        }
+
+        if (string.IsNullOrEmpty(targetLanguage))
+        {
+            return Result.Failure<Guid>(TranslationErrors.NoTargetLanguage);
+        }
+
+        Guid id = text.GetHashedId();
+        var translationEntityResult = await Get(id, targetLanguage);
+
+        if (translationEntityResult is not null && translationEntityResult.IsFailure)
+        {
+            var languageResult = await _textAnalyticsService.GetLanguage(text);
+            if (languageResult.IsFailure)
+            {
+                return Result.Failure<Guid>(languageResult.Error);
+            }
+
+            var language = languageResult.Value;
+            var translatedTextResult = await GetTranslatedText(text, language, targetLanguage);
+            if (translatedTextResult.IsFailure)
+            {
+                return Result.Failure<Guid>(translatedTextResult.Error);
+            }
+
+            await _translationRepository.Add(new Translation
                 {
                     Id = id,
                     LanguageFrom = language,
                     OriginalText = text,
                     LanguageTo = targetLanguage,
-                    TranslatedText = language == targetLanguage ? text
-                                    : await _textTranslatorService.Translate(text, language, targetLanguage)
+                    TranslatedText = translatedTextResult.Value
                 });
         }
 
         return id;
     }
 
-    public async Task<Translation> Add(Translation translation)
+    public async Task<Result<Translation>> Get(Guid id, string language)
     {
-        return await Get(translation) ?? await _translationRepository.Add(translation);
+        var entity = await _translationRepository.Get(id, language);
+
+        return entity is null ? Result.Failure<Translation>(TranslationErrors.NotFound(id, language)) : entity;
     }
 
-    public async Task<Translation?> Get(Translation translation)
+    private async Task<Result<string>> GetTranslatedText(string text, string currentLanguage, string targetLanguage)
     {
-        return await Get(translation.Id, translation.LanguageTo);
-    }
+        if (currentLanguage == targetLanguage)
+        {
+            return text;
+        }
 
-    public async Task<Translation?> Get(Guid id, string language)
-    {
-        return await _translationRepository.Get(id, language);
-    }
-
-    public async Task<Guid> GetHashedId(string text)
-    {
-        byte[] hashBytes = SHA256.Create()
-            .ComputeHash(Encoding.UTF8.GetBytes(text))
-            .Take(16)
-            .ToArray();
-
-        return new Guid(hashBytes);
+        var translatedTextResult = await _textTranslatorService.Translate(text, currentLanguage, targetLanguage);
+        return translatedTextResult.IsSuccess ? translatedTextResult.Value : Result.Failure<string>(translatedTextResult.Error);
     }
 }
