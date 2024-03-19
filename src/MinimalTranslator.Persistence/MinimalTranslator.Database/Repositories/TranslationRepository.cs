@@ -13,19 +13,19 @@ public class TranslationRepository : ITranslationRepository
         _dbContext = dbContext;
     }
     
-    public async Task Add(Translation translation)
+    public async Task<Translation> Add(Translation translation)
     {
-        if (!string.IsNullOrEmpty(translation.TranslatedText) && (await Get(translation.Id)) is null)
-        {
-            await _dbContext.Translations.AddAsync(translation);
-            await _dbContext.SaveChangesAsync();
-        }
+        await _dbContext.Translations.AddAsync(translation);
+        await _dbContext.SaveChangesAsync();
+
+        return translation;
     }
 
-    public async Task<Translation?> Get(Guid id)
+    public async Task<Translation?> Get(Guid id, string language)
     {
         return await _dbContext.Translations
-            .Where(x => x.Id == id)
+            .AsNoTracking()
+            .Where(x => x.Id == id && x.LanguageTo == language)
             .FirstOrDefaultAsync();
     }
 }
