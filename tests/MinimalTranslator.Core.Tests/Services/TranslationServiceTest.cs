@@ -52,7 +52,7 @@ public class TranslationServiceTest
 
         _textAnalyticsServiceMock.Setup(x => x.GetLanguage(It.IsAny<string>())).ReturnsAsync(Result.Success(sourceLanguage));
         _textTranslatorServiceMock.Setup(x => x.Translate(text, sourceLanguage, targetLanguage)).ReturnsAsync(Result.Success(translation.TranslatedText));
-        _translationRepositoryMock.Setup(x => x.Get(translation.Id, targetLanguage)).ReturnsAsync((Translation)null);
+        _translationRepositoryMock.Setup(x => x.Get(translation.Id, targetLanguage)).ReturnsAsync((Translation?)null);
         _translationRepositoryMock.Setup(x => x.Add(It.IsAny<Translation>())).ReturnsAsync(translation);
 
         // Act

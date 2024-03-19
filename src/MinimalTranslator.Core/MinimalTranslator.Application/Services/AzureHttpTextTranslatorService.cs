@@ -46,7 +46,7 @@ public class AzureHttpTextTranslatorService : AzureHttpServiceBase, ITextTransla
                 return Result.Failure<string>(TranslatedTextResponseErrors.NoTranslation);
             }
 
-            var translation = result?.First().Translations.First().Text;
+            var translation = result?.First().Translations?.First().Text;
             if (string.IsNullOrEmpty(translation))
             {
                 return Result.Failure<string>(TranslatedTextResponseErrors.EmptyTranslation);
