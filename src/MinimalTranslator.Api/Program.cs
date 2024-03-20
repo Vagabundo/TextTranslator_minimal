@@ -1,30 +1,39 @@
-using MinimalTranslator.Application.Interfaces;
-using MinimalTranslator.Application.Services;
+using MinimalTranslator.Application;
 using MinimalTranslator.Database;
-using Microsoft.EntityFrameworkCore;
-using MinimalTranslator.Database.Repositories;
 using MinimalTranslator.Api;
 using MinimalTranslator.Api.Extensions;
-using MinimalTranslator.Domain.Translation;
+using MinimalTranslator.Api.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContextPool<InMemoryContext>(options => 
-{
-    options.UseInMemoryDatabase("InMemoryTranslationsDatabase");
-});
-
-// Application
-builder.Services.AddScoped<ITranslationService, TranslationService>();
-builder.Services.AddAzureHttpServices(builder.Configuration);
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Persistence
-builder.Services.AddScoped<ITranslationRepository, TranslationRepository>();
+builder.Services.AddDatabaseServices(builder.Configuration);
 
-// Language
+// Application
+builder.Services.AddApplicationServices(builder.Configuration);
+
+// Config
 builder.Services.AddLanguageConfig(builder.Configuration);
 
+// Along with app.UseExceptionHandler()
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+//app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseExceptionHandler();
 
 app.MapTranslationEndpoints();
 
