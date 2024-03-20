@@ -19,7 +19,7 @@ public class TranslationService : ITranslationService
         _textTranslatorService = textTranslatorService;
     }
 
-    public async Task<Result<Guid>> Add(string text, string targetLanguage)
+    public async Task<Result<Guid>> Add(string? text, string? targetLanguage)
     {
         if (string.IsNullOrEmpty(text))
         {
@@ -62,8 +62,13 @@ public class TranslationService : ITranslationService
         return id;
     }
 
-    public async Task<Result<Translation>> Get(Guid id, string language)
+    public async Task<Result<Translation>> Get(Guid id, string? language)
     {
+        if (string.IsNullOrEmpty(language))
+        {
+            return Result.Failure<Translation>(TranslationErrors.NoTargetLanguage);
+        }
+
         var entity = await _translationRepository.Get(id, language);
 
         return entity is null ? Result.Failure<Translation>(TranslationErrors.NotFound(id, language)) : entity;
