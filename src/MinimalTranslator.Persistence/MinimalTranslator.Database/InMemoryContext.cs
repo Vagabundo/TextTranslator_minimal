@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using MinimalTranslator.Domain;
+using MinimalTranslator.Domain.Translation;
 
 namespace MinimalTranslator.Database;
 

@@ -1,11 +1,7 @@
-using System.ComponentModel.DataAnnotations;
+namespace MinimalTranslator.Domain.Translation;
 
-namespace MinimalTranslator.Domain;
-
-public class Translation
+public class Translation : Entity
 {
-    [Key]
-    public Guid Id { set; get; }
     public string? OriginalText { set; get; }
     public string? LanguageFrom { set; get; }
     public string? TranslatedText { set; get; }

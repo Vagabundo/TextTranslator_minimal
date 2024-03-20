@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using MinimalTranslator.Database.Repositories;
 using MinimalTranslator.Api;
 using MinimalTranslator.Api.Extensions;
+using MinimalTranslator.Domain.Translation;
 
 var builder = WebApplication.CreateBuilder(args);
 

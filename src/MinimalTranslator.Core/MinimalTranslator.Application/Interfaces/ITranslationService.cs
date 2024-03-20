@@ -1,4 +1,4 @@
-using MinimalTranslator.Domain;
+using MinimalTranslator.Domain.Translation;
 using MinimalTranslator.SharedKernel;
 
 namespace MinimalTranslator.Application.Interfaces;

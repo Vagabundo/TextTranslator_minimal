@@ -2,8 +2,7 @@ using MinimalTranslator.Application.Data.Azure;
 using MinimalTranslator.Application.Extensions;
 using MinimalTranslator.Application.Interfaces;
 using MinimalTranslator.Application.Services;
-using MinimalTranslator.Domain;
-using MinimalTranslator.Domain.Translations;
+using MinimalTranslator.Domain.Translation;
 using MinimalTranslator.SharedKernel;
 using Moq;
 

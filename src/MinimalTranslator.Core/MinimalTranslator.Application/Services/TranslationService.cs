@@ -1,7 +1,6 @@
 using MinimalTranslator.Application.Extensions;
 using MinimalTranslator.Application.Interfaces;
-using MinimalTranslator.Domain;
-using MinimalTranslator.Domain.Translations;
+using MinimalTranslator.Domain.Translation;
 using MinimalTranslator.SharedKernel;
 
 namespace MinimalTranslator.Application.Services;

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using MinimalTranslator.Application.Interfaces;
 using MinimalTranslator.Domain;
+using MinimalTranslator.Domain.Translation;
 
 namespace MinimalTranslator.Database.Repositories;
 

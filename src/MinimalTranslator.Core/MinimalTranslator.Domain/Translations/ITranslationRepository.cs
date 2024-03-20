@@ -1,6 +1,4 @@
-using MinimalTranslator.Domain;
-
-namespace MinimalTranslator.Application.Interfaces;
+namespace MinimalTranslator.Domain.Translation;
 
 public interface ITranslationRepository
 {
