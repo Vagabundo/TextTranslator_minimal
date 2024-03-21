@@ -1,3 +1,4 @@
+using FluentAssertions;
 using MinimalTranslator.Application.Data.Azure;
 using MinimalTranslator.Application.Extensions;
 using MinimalTranslator.Application.Interfaces;
@@ -14,7 +15,7 @@ public class TranslationServiceTest
     private Mock<ITranslationRepository> _translationRepositoryMock;
     private Mock<ITextAnalyticService> _textAnalyticsServiceMock;
     private Mock<ITextTranslatorService> _textTranslatorServiceMock;
-    private Translation? _validTranslation;
+    private Translation _validTranslation;
     private string _validText;
     private string _validTranslatedText;
     private string _validId;
@@ -45,7 +46,7 @@ public class TranslationServiceTest
     public async Task Add_WhenTextIsValidAndTranslationIsNotInDB_ReturnsIdAndAddsTranslationToDB()
     {        
         _textAnalyticsServiceMock.Setup(x => x.GetLanguage(It.IsAny<string>())).ReturnsAsync(Result.Success(_sourceLanguage));
-        _textTranslatorServiceMock.Setup(x => x.Translate(_validText, _sourceLanguage, _targetLanguage)).ReturnsAsync(Result.Success(_validTranslation.TranslatedText));
+        _textTranslatorServiceMock.Setup(x => x.Translate(_validText, _sourceLanguage, _targetLanguage)).ReturnsAsync(Result.Success(_validTranslatedText));
         _translationRepositoryMock.Setup(x => x.Get(_validTranslation.Id, _targetLanguage)).ReturnsAsync((Translation?)null);
         _translationRepositoryMock.Setup(x => x.Add(It.IsAny<Translation>())).ReturnsAsync(_validTranslation);
 
@@ -53,8 +54,8 @@ public class TranslationServiceTest
         var result = await _translationService.Add(_validText, _targetLanguage);
 
         // Assert
-        Assert.IsTrue(result.IsSuccess);
-        Assert.That(result.Value, Is.EqualTo(_validTranslation.Id));
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(_validTranslation.Id);
         _textAnalyticsServiceMock.VerifyAll();
         _textTranslatorServiceMock.VerifyAll();
         _translationRepositoryMock.VerifyAll();
@@ -76,8 +77,8 @@ public class TranslationServiceTest
         var result = await _translationService.Add(_validText, _targetLanguage);
 
         // Assert
-        Assert.IsTrue(result.IsSuccess);
-        Assert.That(result.Value, Is.EqualTo(_validTranslation.Id));
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(_validTranslation.Id);
         _translationRepositoryMock.VerifyAll();
         _translationRepositoryMock.Verify(x => x.Add(It.IsAny<Translation>()), Times.Never);
         _textAnalyticsServiceMock.Verify(x => x.GetLanguage(It.IsAny<string>()), Times.Never);
@@ -93,8 +94,8 @@ public class TranslationServiceTest
         var result = await _translationService.Add(invalidText, _targetLanguage);
 
         // Assert
-        Assert.IsTrue(result.IsFailure);
-        Assert.That(result.Error, Is.EqualTo(TranslationErrors.NoText));
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(TranslationErrors.NoText);
     }
 
     [Test]
@@ -106,8 +107,8 @@ public class TranslationServiceTest
         var result = await _translationService.Add(_validText, invalidTargetLanguage);
 
         // Assert
-        Assert.IsTrue(result.IsFailure);
-        Assert.That(result.Error, Is.EqualTo(TranslationErrors.NoTargetLanguage));
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(TranslationErrors.NoTargetLanguage);
     }
 
     [Test]
@@ -121,8 +122,8 @@ public class TranslationServiceTest
         var result = await _translationService.Add(_validText, _targetLanguage);
 
         // Assert
-        Assert.IsTrue(result.IsFailure);
-        Assert.That(result.Error, Is.EqualTo(error));
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(error);
         _textAnalyticsServiceMock.VerifyAll();
     }
 
@@ -138,8 +139,8 @@ public class TranslationServiceTest
         var result = await _translationService.Add(_validText, _targetLanguage);
 
         // Assert
-        Assert.IsTrue(result.IsFailure);
-        Assert.That(result.Error, Is.EqualTo(error));
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(error);
         _textAnalyticsServiceMock.VerifyAll();
         _textTranslatorServiceMock.VerifyAll();
     }
@@ -154,8 +155,8 @@ public class TranslationServiceTest
         var result = await _translationService.Get(emptyId, _targetLanguage);
 
         // Assert
-        Assert.IsTrue(result.IsFailure);
-        Assert.That(result.Error, Is.EqualTo(error));
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(error);
     }
 
     [Test]
@@ -168,8 +169,8 @@ public class TranslationServiceTest
         var result = await _translationService.Get(invalidId, _targetLanguage);
 
         // Assert
-        Assert.IsTrue(result.IsFailure);
-        Assert.That(result.Error, Is.EqualTo(error));
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(error);
     }
 
     [Test]
@@ -182,8 +183,8 @@ public class TranslationServiceTest
         var result = await _translationService.Get(invalidId, _targetLanguage);
 
         // Assert
-        Assert.IsTrue(result.IsFailure);
-        Assert.That(result.Error, Is.EqualTo(error));
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(error);
     }
 
     [Test]
@@ -197,8 +198,8 @@ public class TranslationServiceTest
         var result = await _translationService.Get(_validId, _targetLanguage);
 
         // Assert
-        Assert.IsTrue(result.IsFailure);
-        Assert.That(result.Error, Is.EqualTo(error));
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(error);
     }
 
     [Test]
@@ -211,8 +212,8 @@ public class TranslationServiceTest
         var result = await _translationService.Get(_validId, _targetLanguage);
 
         // Assert
-        Assert.IsTrue(result.IsSuccess);
-        Assert.That(result.Value, Is.EqualTo(_validTranslation));
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(_validTranslation);
     }
 
     private void InitializeValidData()

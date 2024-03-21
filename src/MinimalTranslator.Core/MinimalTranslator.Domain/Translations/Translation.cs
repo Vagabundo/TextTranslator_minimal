@@ -1,6 +1,6 @@
 namespace MinimalTranslator.Domain.Translation;
 
-public class Translation : Entity
+public sealed record Translation : Entity
 {
     public string? OriginalText { set; get; }
     public string? LanguageFrom { set; get; }

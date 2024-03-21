@@ -1,6 +1,6 @@
 namespace MinimalTranslator.Api.Data;
 
-public class TranslationRequest
+public record TranslationRequest
 {
     public string? Text { get; set; }
 }

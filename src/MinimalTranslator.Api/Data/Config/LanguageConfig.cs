@@ -1,6 +1,6 @@
 namespace MinimalTranslator.Api.Config;
 
-public class LanguageConfig
+public record LanguageConfig
 {
     public string? TargetLanguage { get; set; }
 }

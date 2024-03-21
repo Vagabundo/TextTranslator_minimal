@@ -640,11 +640,13 @@
 							"pm.test(\"Status code is 400 Bad request\", function () {",
 							"    pm.expect(pm.response.code).to.eql(400);",
 							"});",
+							"",
 							"pm.test(\"Error message as expected\", function () {",
-							"    pm.expect(pm.response.text().slice(1,-1)).to.eql(\"Invalid Id provided\");",
+							"    pm.expect(pm.response.text().search(\"Validation\")).to.not.equal(-1)",
 							"});"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -674,11 +676,13 @@
 							"pm.test(\"Status code is 400 Bad request\", function () {",
 							"    pm.expect(pm.response.code).to.eql(400);",
 							"});",
+							"",
 							"pm.test(\"Error message as expected\", function () {",
-							"    pm.expect(pm.response.text().slice(1,-1)).to.eql(\"Invalid Id provided\");",
+							"    pm.expect(pm.response.text().search(\"Validation\")).to.not.equal(-1)",
 							"});"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -762,7 +766,7 @@
 		},
 		{
 			"key": "base_url",
-			"value": "http://localhost:5000/translation"
+			"value": "http://localhost:5000/api/translation"
 		},
 		{
 			"key": "expected_translation",

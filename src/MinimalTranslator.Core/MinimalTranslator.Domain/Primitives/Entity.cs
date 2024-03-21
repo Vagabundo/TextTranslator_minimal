@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MinimalTranslator.Domain;
 
-public class Entity
+public record Entity
 {
     [Key]
     public Guid Id { set; get; }

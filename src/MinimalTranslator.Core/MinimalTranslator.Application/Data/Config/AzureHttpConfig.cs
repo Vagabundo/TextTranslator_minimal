@@ -1,6 +1,6 @@
 namespace MinimalTranslator.Application.Config;
 
-public class AzureHttpConfig 
+public record AzureHttpConfig 
 {
     public string? Uri { get; set; }
     public string? Region { get; set; }
