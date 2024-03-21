@@ -1,4 +1,4 @@
-using MinimalTranslator.Api.ApiData;
+using MinimalTranslator.Api.Data;
 using MinimalTranslator.Application.Services;
 using MinimalTranslator.Database.Repositories;
 using MinimalTranslator.Domain;

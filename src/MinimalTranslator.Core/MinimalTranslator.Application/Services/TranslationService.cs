@@ -61,7 +61,14 @@ public class TranslationService : ITranslationService
         return id;
     }
 
-    public async Task<Result<Translation>> Get(Guid id, string? language)
+    public async Task<Result<Translation>> Get(string id, string? language)
+    {
+        return Guid.TryParse(id, out var guid) ?
+            await Get(guid, language) :
+            Result.Failure<Translation>(TranslationErrors.InvalidId(id));
+    }
+
+    private async Task<Result<Translation>> Get(Guid id, string? language)
     {
         if (string.IsNullOrEmpty(language))
         {

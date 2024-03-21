@@ -1,4 +1,4 @@
-namespace MinimalTranslator.Api.ApiData;
+namespace MinimalTranslator.Api.Data;
 
 public class TranslationRequest
 {

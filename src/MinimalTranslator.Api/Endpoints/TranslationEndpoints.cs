@@ -1,4 +1,4 @@
-using MinimalTranslator.Api.ApiData;
+using MinimalTranslator.Api.Data;
 using MinimalTranslator.Api.Config;
 using MinimalTranslator.Api.Extensions;
 using MinimalTranslator.Application.Interfaces;
@@ -25,9 +25,7 @@ public static class TranslationEndpoints
             ITranslationService translationService,
             LanguageConfig languageConfig) =>
         {
-            var guid = new Guid(id);
-            var result = await translationService.Get(guid, languageConfig.TargetLanguage);
-
+            var result = await translationService.Get(id, languageConfig.TargetLanguage);
             return result.IsSuccess ? Results.Ok(result.Value.TranslatedText) : result.ToProblemDetails();
         });
     }

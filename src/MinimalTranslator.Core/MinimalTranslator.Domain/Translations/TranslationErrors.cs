@@ -10,6 +10,8 @@ public static class TranslationErrors
         "Translation.Validation", $"TargetLanguage can't be empty");
     public static readonly Error NoTranslatedText = Error.Validation(
         "Translation.Validation", $"Translated text can't be empty");
+    public static Error InvalidId(string id) => Error.Validation(
+        "Translation.Validation", $"Provided translation id {id} is invalid");
     public static Error NotFound(Guid translationId, string language) => Error.NotFound(
         "Translation.NotFound", $"The translation with the Id = '{translationId}' to language {language} was not found");
     public static Error TranslationNotUnique(Guid translationId, string language) => Error.Conflict(
