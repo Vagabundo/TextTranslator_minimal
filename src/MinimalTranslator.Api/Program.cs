@@ -38,3 +38,6 @@ app.UseExceptionHandler();
 app.MapTranslationEndpoints();
 
 app.Run();
+
+// This is to allow integration tests in MinimalTranslatorApi.Tests project
+public partial class Program { }

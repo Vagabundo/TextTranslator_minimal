@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalTranslator.Core.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalTranslator.Architecture.Tests", "tests\MinimalTranslator.Architecture.Tests\MinimalTranslator.Architecture.Tests.csproj", "{3A050A5F-FF17-467B-9C3C-5205B2DAC5EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalTranslator.Api.Tests", "tests\MinimalTranslator.Api.Tests\MinimalTranslator.Api.Tests.csproj", "{C6F64A6C-3B1C-4B41-B950-4A3590980238}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{3A050A5F-FF17-467B-9C3C-5205B2DAC5EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A050A5F-FF17-467B-9C3C-5205B2DAC5EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A050A5F-FF17-467B-9C3C-5205B2DAC5EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6F64A6C-3B1C-4B41-B950-4A3590980238}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6F64A6C-3B1C-4B41-B950-4A3590980238}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6F64A6C-3B1C-4B41-B950-4A3590980238}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6F64A6C-3B1C-4B41-B950-4A3590980238}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,5 +82,6 @@ Global
 		{A2566D1D-C96A-4472-AD91-FC7589B8C324} = {FBBF97C6-5EAA-4CD8-B6ED-49244689EBDC}
 		{D3B4EBD6-E89A-4602-92DB-111806F6AA80} = {FC2F32CB-517B-4511-836D-9AA9A327C0A9}
 		{3A050A5F-FF17-467B-9C3C-5205B2DAC5EC} = {FC2F32CB-517B-4511-836D-9AA9A327C0A9}
+		{C6F64A6C-3B1C-4B41-B950-4A3590980238} = {FC2F32CB-517B-4511-836D-9AA9A327C0A9}
 	EndGlobalSection
 EndGlobal
