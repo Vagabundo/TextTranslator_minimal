@@ -34,12 +34,12 @@ internal sealed class GetTranslationByIdQueryHandler : IQueryHandler<GetTranslat
             """
             SELECT t.OriginalText, t.LanguageFrom, t.TranslatedText, t.LanguageTo
             FROM Translations t
-            WHERE t.Id = @guid
+            WHERE t.Id = @Id AND t.LanguageTo = @Language
             """;
 
         TranslationResponse? translation = await connection.QueryFirstOrDefaultAsync<TranslationResponse>(
             sql,
-            new { guid });
+            new { Id = guid, request.Language });
 
         if (translation is null)
         {
