@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MinimalTranslator.Application.Exceptions;
 
 //Custom Exception handler middleware
 namespace MinimalTranslator.Api.Middleware;
@@ -26,16 +27,52 @@ public class ExceptionHandlingMiddleware
         {
             _logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
 
+            var exceptionDetails = GetExceptionDetails(exception);
             var problemDetails = new ProblemDetails
             {
-                Status = StatusCodes.Status500InternalServerError,
-                Title = "Server Error",
-                Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1"
+                Status = exceptionDetails.Status,
+                Type = exceptionDetails.Type,
+                Title = exceptionDetails.Title,
+                Detail = exceptionDetails.Detail
             };
 
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            if(exceptionDetails.Errors is not null)
+            {
+                problemDetails.Extensions["errors"] = exceptionDetails.Errors;
+            }
+
+            context.Response.StatusCode = exceptionDetails.Status;
 
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
     }
+
+    private static ExceptionDetails GetExceptionDetails(Exception exception)
+    {
+        return exception switch
+        {
+            ValidationException validationException => new ExceptionDetails(
+                StatusCodes.Status400BadRequest,
+                "ValidationFailure",
+                "Validation Error",
+                "There were validation errors",
+                validationException.Errors
+            ),
+            _ => new ExceptionDetails(
+                StatusCodes.Status500InternalServerError,
+                "ServerError",
+                "Server Error",
+                "There was an unexpected error in the application",
+                null
+            )
+        };
+    }
+
+    internal record ExceptionDetails(
+        int Status,
+        string Type,
+        string Title,
+        string Detail,
+        IEnumerable<object>? Errors
+    );
 }

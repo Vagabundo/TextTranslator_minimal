@@ -1,8 +1,10 @@
+using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MinimalTranslator.Application.Config;
-using MinimalTranslator.Application.Interfaces;
-using MinimalTranslator.Application.Services;
+using MinimalTranslator.Application.Abstractions.Services;
+using MinimalTranslator.Application.Extensions.Behaviors;
+using MinimalTranslator.Application.Services.Azure;
+using MinimalTranslator.Application.Services.Azure.Data.Config;
 
 namespace MinimalTranslator.Application;
 
@@ -10,8 +12,16 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<ITranslationService, TranslationService>();
         services.AddAzureHttpServices(configuration);
+
+        services.AddMediatR(configuration =>
+        {
+            configuration.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
+            configuration.AddOpenBehavior(typeof(LoggingBehavior<,>));
+            configuration.AddOpenBehavior(typeof(ValidationBehavior<,>));
+        });
+
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
         return services;
     }

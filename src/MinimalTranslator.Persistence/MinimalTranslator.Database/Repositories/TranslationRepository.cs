@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using MinimalTranslator.Domain;
-using MinimalTranslator.Domain.Translation;
+using MinimalTranslator.Database.Abstractions;
+using MinimalTranslator.Domain.Translations;
 
 namespace MinimalTranslator.Database.Repositories;
 
@@ -13,19 +13,16 @@ public class TranslationRepository : ITranslationRepository
         _dbContext = dbContext;
     }
     
-    public async Task<Translation> Add(Translation translation)
+    public async Task AddAsync(Translation translation, CancellationToken cancellationToken = default)
     {
-        await _dbContext.Translations.AddAsync(translation);
-        await _dbContext.SaveChangesAsync();
-
-        return translation;
+        await _dbContext.Translations.AddAsync(translation, cancellationToken);
     }
 
-    public async Task<Translation?> Get(Guid id, string language)
+    public async Task<bool> AlreadyExistsAsync(Guid id, string language, CancellationToken cancellationToken = default)
     {
+        var languageAsDomain = new Language(language);
+
         return await _dbContext.Translations
-            .AsNoTracking()
-            .Where(x => x.Id == id && x.LanguageTo == language)
-            .FirstOrDefaultAsync();
+            .AnyAsync(x => x.Id == id && x.LanguageTo == languageAsDomain, cancellationToken);
     }
 }

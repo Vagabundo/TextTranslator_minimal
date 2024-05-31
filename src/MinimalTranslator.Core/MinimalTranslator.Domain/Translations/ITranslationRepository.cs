@@ -1,7 +1,7 @@
-namespace MinimalTranslator.Domain.Translation;
+namespace MinimalTranslator.Domain.Translations;
 
 public interface ITranslationRepository
 {
-    Task<Translation> Add(Translation translation);
-    Task<Translation?> Get(Guid id, string language);
+    Task AddAsync(Translation translation, CancellationToken cancellationToken = default);
+    Task<bool> AlreadyExistsAsync(Guid id, string language, CancellationToken cancellationToken = default);
 }

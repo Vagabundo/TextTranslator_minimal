@@ -10,4 +10,8 @@
     <ProjectReference Include="..\..\MinimalTranslator.SharedKernel\MinimalTranslator.SharedKernel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
+  </ItemGroup>
+
 </Project>
