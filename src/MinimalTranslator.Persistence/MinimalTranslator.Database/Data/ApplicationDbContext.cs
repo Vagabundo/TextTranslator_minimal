@@ -8,11 +8,11 @@ using MinimalTranslator.Domain.Translations;
 
 namespace MinimalTranslator.Database;
 
-public sealed class InMemoryContext : DbContext, IUnitOfWork, IDbContext
+public sealed class ApplicationDbContext : DbContext, IUnitOfWork, IApplicationDbContext
 {
     private readonly IPublisher _publisher;
 
-    public InMemoryContext(DbContextOptions options, IPublisher publisher) : base(options)
+    public ApplicationDbContext(DbContextOptions options, IPublisher publisher) : base(options)
     {
         _publisher = publisher;
     }
@@ -21,7 +21,7 @@ public sealed class InMemoryContext : DbContext, IUnitOfWork, IDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(InMemoryContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
     }
 
@@ -42,14 +42,14 @@ public sealed class InMemoryContext : DbContext, IUnitOfWork, IDbContext
     private async Task PublishDomainEventAsync()
     {
         var domainEvents = ChangeTracker
-        .Entries<Entity>()
-        .Select(entry => entry.Entity)
-        .SelectMany(entity =>
-        {
-            var domainEvents = entity.DomainEvents;
-            entity.ClearDomainEvents();
-            return domainEvents;
-        }).ToList();
+            .Entries<Entity>()
+            .Select(entry => entry.Entity)
+            .SelectMany(entity =>
+            {
+                var domainEvents = entity.DomainEvents;
+                entity.ClearDomainEvents();
+                return domainEvents;
+            }).ToList();
 
         foreach(var domainEvent in domainEvents)
         {

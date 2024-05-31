@@ -32,9 +32,9 @@ internal sealed class GetTranslationByIdQueryHandler : IQueryHandler<GetTranslat
 
         const string sql =
             """
-            SELECT t.OriginalText, t.LanguageFrom, t.TranslatedText, t.LanguageTo
-            FROM Translations t
-            WHERE t.Id = @Id AND t.LanguageTo = @Language
+            SELECT t."OriginalText", t."LanguageFrom", t."TranslatedText", t."LanguageTo"
+            FROM "Translations" t
+            WHERE t."Id" = @Id AND t."LanguageTo" = @Language
             """;
 
         TranslationResponse? translation = await connection.QueryFirstOrDefaultAsync<TranslationResponse>(

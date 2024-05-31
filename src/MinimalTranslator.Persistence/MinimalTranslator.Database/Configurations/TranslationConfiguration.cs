@@ -9,6 +9,11 @@ internal sealed class TranslationConfiguration : IEntityTypeConfiguration<Transl
     public void Configure(EntityTypeBuilder<Translation> builder)
     {
         builder.ToTable("Translations");
+
+        //specific for Postgresql
+        builder.Property<Guid>("Id")
+            .HasColumnType("uuid");
+
         builder.HasKey(t => new { t.Id, t.LanguageTo });
 
         builder.Property(t => t.OriginalText)

@@ -13,42 +13,62 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDatabaseServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSQLiteDatabase(configuration);
+        services.AddDatabase(configuration);
 
         return services;
     }
 
-    public static IServiceCollection AddSQLiteDatabase(this IServiceCollection services, IConfiguration configuration)
+    internal static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("InMemorySQLiteDatabase") ?? throw new ArgumentNullException(nameof(configuration));
+        services.AddPosgreSqlDatabase(configuration);
+
+        services.AddScoped<ITranslationRepository, TranslationRepository>();
+        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
+
+        return services;
+    }
+
+    internal static IServiceCollection AddPosgreSqlDatabase(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("PosgreSqlDatabase") ?? throw new ArgumentNullException(nameof(configuration));
+
+        services.AddTransient<IDbConnectionFactory>(
+            _ => new NpgsqlConnectionFactory(connectionString));
+
+        services.AddDbContextPool<IApplicationDbContext, ApplicationDbContext>(options => {
+            options.UseNpgsql(connectionString);
+        });
+
+        return services;
+    }
+
+    #region Alternative Databases
+    internal static IServiceCollection AddSQLiteDatabase(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("SQLiteDatabase") ?? throw new ArgumentNullException(nameof(configuration));
 
         services.AddTransient<IDbConnectionFactory>(
             _ => new SqliteConnectionFactory(connectionString));
 
-        services.AddDbContextPool<IDbContext, InMemoryContext>(options => {
+        services.AddDbContextPool<IApplicationDbContext, ApplicationDbContext>(options => {
             options.UseSqlite(connectionString);
         });
-
-        services.AddScoped<ITranslationRepository, TranslationRepository>();
-
-        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<InMemoryContext>());
 
         return services;
     }
 
-    public static IServiceCollection AddInMemoryDatabase(this IServiceCollection services)
+    internal static IServiceCollection AddInMemoryDatabase(this IServiceCollection services)
     {
-        services.AddDbContextPool<IDbContext, InMemoryContext>(options => 
+        services.AddDbContextPool<IApplicationDbContext, ApplicationDbContext>(options => 
         {
             options.UseInMemoryDatabase("InMemoryTranslationsDatabase");
         });
 
-        services.AddScoped<ITranslationRepository, TranslationRepository>();
-
         return services;
     }
+    #endregion
 
-    public static IServiceCollection AddRedisDatabase(this IServiceCollection services, IConfiguration configuration)
+    internal static IServiceCollection AddRedisDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddStackExchangeRedisCache(redisOptions =>
         {

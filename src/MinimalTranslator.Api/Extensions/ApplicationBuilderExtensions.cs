@@ -14,7 +14,7 @@ public static class ApplicationBuilderExtensions
 
         try
         {
-            var context = services.GetRequiredService<InMemoryContext>();
+            var context = services.GetRequiredService<ApplicationDbContext>();
             await context.Database.MigrateAsync();
         }
         catch(Exception ex)

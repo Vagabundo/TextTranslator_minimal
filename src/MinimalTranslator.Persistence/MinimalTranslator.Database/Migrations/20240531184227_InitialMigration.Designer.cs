@@ -5,41 +5,46 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MinimalTranslator.Database;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace MinimalTranslator.Database.Migrations
 {
-    [DbContext(typeof(InMemoryContext))]
-    [Migration("20240531123543_InitialMigration")]
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20240531184227_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("MinimalTranslator.Domain.Translations.Translation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("LanguageTo")
                         .HasMaxLength(10)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(10)");
 
                     b.Property<string>("LanguageFrom")
                         .HasMaxLength(10)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(10)");
 
                     b.Property<string>("OriginalText")
                         .HasMaxLength(400)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(400)");
 
                     b.Property<string>("TranslatedText")
                         .HasMaxLength(400)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(400)");
 
                     b.HasKey("Id", "LanguageTo");
 

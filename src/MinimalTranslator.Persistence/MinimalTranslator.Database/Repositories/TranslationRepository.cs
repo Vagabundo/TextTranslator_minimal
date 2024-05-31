@@ -6,9 +6,9 @@ namespace MinimalTranslator.Database.Repositories;
 
 public class TranslationRepository : ITranslationRepository
 {
-    private readonly InMemoryContext _dbContext;
+    private readonly ApplicationDbContext _dbContext;
 
-    public TranslationRepository(InMemoryContext dbContext)
+    public TranslationRepository(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }

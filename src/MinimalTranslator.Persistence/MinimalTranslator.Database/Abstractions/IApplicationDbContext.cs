@@ -4,7 +4,7 @@ using MinimalTranslator.Domain.Translations;
 
 namespace MinimalTranslator.Database.Abstractions;
 
-public interface IDbContext
+public interface IApplicationDbContext
 {
     DbSet<Translation> Translations { set; get; }
     // DatabaseFacade Database { get; }

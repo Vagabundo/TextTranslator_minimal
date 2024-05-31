@@ -15,11 +15,11 @@ namespace MinimalTranslator.Database.Migrations
                 name: "Translations",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    LanguageTo = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
-                    OriginalText = table.Column<string>(type: "TEXT", maxLength: 400, nullable: true),
-                    LanguageFrom = table.Column<string>(type: "TEXT", maxLength: 10, nullable: true),
-                    TranslatedText = table.Column<string>(type: "TEXT", maxLength: 400, nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    LanguageTo = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    OriginalText = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
+                    LanguageFrom = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
+                    TranslatedText = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true)
                 },
                 constraints: table =>
                 {
