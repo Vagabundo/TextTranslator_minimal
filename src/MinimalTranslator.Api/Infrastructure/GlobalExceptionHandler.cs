@@ -53,6 +53,13 @@ public class GlobalExceptionHandler : IExceptionHandler
                 "There were validation errors",
                 validationException.Errors
             ),
+            // DbUpdateException dbUpdateException => new ExceptionDetails(
+            //     StatusCodes.Status200OK,
+            //     "",
+            //     "",
+            //     "Translation already existed. Doing nothing",
+            //     null
+            // ),
             _ => new ExceptionDetails(
                 StatusCodes.Status500InternalServerError,
                 "ServerError",

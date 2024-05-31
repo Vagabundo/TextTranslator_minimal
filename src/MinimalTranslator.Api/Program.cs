@@ -37,6 +37,7 @@ app.ApplyMigration();
 app.UseExceptionHandler();
 
 app.MapTranslationEndpoints();
+app.MapCacheEndpoints();
 
 app.Run();
 

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MinimalTranslator.Application.Abstractions.Data;
 using MinimalTranslator.Database.Abstractions;
+using MinimalTranslator.Database.Cache;
 using MinimalTranslator.Database.Data;
 using MinimalTranslator.Database.Repositories;
 using MinimalTranslator.Domain.Translations;
@@ -14,6 +15,7 @@ public static class DependencyInjection
     public static IServiceCollection AddDatabaseServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDatabase(configuration);
+        services.AddRedisCache(configuration);
 
         return services;
     }
@@ -68,13 +70,14 @@ public static class DependencyInjection
     }
     #endregion
 
-    internal static IServiceCollection AddRedisDatabase(this IServiceCollection services, IConfiguration configuration)
+    internal static IServiceCollection AddRedisCache(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddStackExchangeRedisCache(redisOptions =>
         {
             redisOptions.Configuration = configuration.GetConnectionString("Redis") ?? throw new ArgumentNullException(nameof(configuration));
         });
 
+        services.AddTransient<ICacheService, RedisCacheService>();
         //services.AddScoped<ITranslationRepository, TranslationRedisRepository>();
 
         return services;

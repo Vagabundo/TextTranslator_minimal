@@ -10,6 +10,9 @@ public sealed class Translation : Entity
     public Text? TranslatedText { get; private set; }
     public Language? LanguageTo { get; private set; }
 
+    private Translation()
+    {
+    }
 
     private Translation(Guid id, Text originalText, Language languageFrom, Text translatedText, Language languageTo) : base(id)
     {
