@@ -1,5 +1,5 @@
 using FluentValidation;
-using MinimalTranslator.Domain.Translation;
+using MinimalTranslator.Domain.Translations;
 
 namespace MinimalTranslator.Application.Translations.Create;
 

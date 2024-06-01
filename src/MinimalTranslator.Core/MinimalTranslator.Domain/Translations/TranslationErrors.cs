@@ -1,6 +1,6 @@
 using MinimalTranslator.SharedKernel;
 
-namespace MinimalTranslator.Domain.Translation;
+namespace MinimalTranslator.Domain.Translations;
 
 public static class TranslationErrors
 {

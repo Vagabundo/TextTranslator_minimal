@@ -2,7 +2,6 @@ using MinimalTranslator.Application.Abstractions.Data;
 using MinimalTranslator.Application.Abstractions.Messaging;
 using MinimalTranslator.Application.Abstractions.Services;
 using MinimalTranslator.Application.Extensions;
-using MinimalTranslator.Domain.Translation;
 using MinimalTranslator.Domain.Translations;
 using MinimalTranslator.SharedKernel;
 

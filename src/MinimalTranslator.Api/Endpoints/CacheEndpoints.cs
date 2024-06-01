@@ -1,3 +1,5 @@
+using MinimalTranslator.Application.Abstractions.Data;
+using MinimalTranslator.Application.Translations;
 using MinimalTranslator.Database.Abstractions;
 using MinimalTranslator.Domain.Translations;
 
@@ -13,7 +15,14 @@ public static class CacheEndpoints
         {
             foreach(Translation translation in dbContext.Translations)
             {
-                await cache.SetAsync($"translation/{translation.Id}/{translation.LanguageTo!.Value}", translation);
+                await cache.SetAsync(
+                    $"translation/{translation.Id}/{translation.LanguageTo!.Value}",
+                    new TranslationResponse(
+                        translation.TranslatedText!.Value,
+                        translation.LanguageFrom!.Value,
+                        translation.TranslatedText!.Value,
+                        translation.LanguageTo!.Value
+                    ));
             }
 
             return Results.Ok();

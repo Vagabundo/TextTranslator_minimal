@@ -1,4 +1,4 @@
-namespace MinimalTranslator.Database.Abstractions;
+namespace MinimalTranslator.Application.Abstractions.Data;
 
 public interface ICacheService
 {

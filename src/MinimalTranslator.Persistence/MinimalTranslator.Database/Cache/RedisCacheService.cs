@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Caching.Distributed;
-using MinimalTranslator.Database.Abstractions;
+using MinimalTranslator.Application.Abstractions.Data;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
 
