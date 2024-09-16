@@ -1,8 +1,14 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using MinimalTranslator.Domain.Translation;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MinimalTranslator.Application.Abstractions.Data;
+using MinimalTranslator.Application.Abstractions.Events;
+using MinimalTranslator.Database.Abstractions;
+using MinimalTranslator.Database.Cache;
+using MinimalTranslator.Database.Data;
+using MinimalTranslator.Database.Events;
 using MinimalTranslator.Database.Repositories;
+using MinimalTranslator.Domain.Translations;
 
 namespace MinimalTranslator.Database;
 
@@ -10,30 +16,80 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDatabaseServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddInMemoryDatabase();
+        services.AddDatabase(configuration);
+        services.AddRedisCache(configuration);
+        services.AddInternalEventBus();
 
         return services;
     }
 
-    public static IServiceCollection AddInMemoryDatabase(this IServiceCollection services)
+    internal static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContextPool<InMemoryContext>(options => 
+        services.AddPosgreSqlDatabase(configuration);
+
+        services.AddScoped<ITranslationRepository, TranslationRepository>();
+        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
+
+        return services;
+    }
+
+    internal static IServiceCollection AddPosgreSqlDatabase(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("PosgreSqlDatabase") ?? throw new ArgumentNullException(nameof(configuration));
+
+        services.AddTransient<IDbConnectionFactory>(
+            _ => new NpgsqlConnectionFactory(connectionString));
+
+        services.AddDbContextPool<IApplicationDbContext, ApplicationDbContext>(options => {
+            options.UseNpgsql(connectionString);
+        });
+
+        return services;
+    }
+
+    internal static IServiceCollection AddInternalEventBus(this IServiceCollection services)
+    {
+        services.AddSingleton<InMemoryTranslationMessageQueue>();
+        services.AddSingleton<IEventBus, EventBus>();
+        services.AddHostedService<TranslationEventProcessorJob>();
+
+        return services;
+    }
+
+    #region Alternative Databases
+    internal static IServiceCollection AddSQLiteDatabase(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("SQLiteDatabase") ?? throw new ArgumentNullException(nameof(configuration));
+
+        services.AddTransient<IDbConnectionFactory>(
+            _ => new SqliteConnectionFactory(connectionString));
+
+        services.AddDbContextPool<IApplicationDbContext, ApplicationDbContext>(options => {
+            options.UseSqlite(connectionString);
+        });
+
+        return services;
+    }
+
+    internal static IServiceCollection AddInMemoryDatabase(this IServiceCollection services)
+    {
+        services.AddDbContextPool<IApplicationDbContext, ApplicationDbContext>(options => 
         {
             options.UseInMemoryDatabase("InMemoryTranslationsDatabase");
         });
 
-        services.AddScoped<ITranslationRepository, TranslationRepository>();
-
         return services;
     }
+    #endregion
 
-    public static IServiceCollection AddRedisDatabase(this IServiceCollection services, IConfiguration configuration)
+    internal static IServiceCollection AddRedisCache(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddStackExchangeRedisCache(redisOptions =>
         {
-            redisOptions.Configuration = configuration.GetConnectionString("Redis");
+            redisOptions.Configuration = configuration.GetConnectionString("Redis") ?? throw new ArgumentNullException(nameof(configuration));
         });
 
+        services.AddTransient<ICacheService, RedisCacheService>();
         //services.AddScoped<ITranslationRepository, TranslationRedisRepository>();
 
         return services;

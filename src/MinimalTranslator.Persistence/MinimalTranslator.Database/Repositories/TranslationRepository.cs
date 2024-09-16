@@ -1,31 +1,36 @@
 using Microsoft.EntityFrameworkCore;
-using MinimalTranslator.Domain;
-using MinimalTranslator.Domain.Translation;
+using MinimalTranslator.Application.Abstractions.Data;
+using MinimalTranslator.Application.Abstractions.Events;
+using MinimalTranslator.Database.Events;
+using MinimalTranslator.Domain.Translations;
 
 namespace MinimalTranslator.Database.Repositories;
 
 public class TranslationRepository : ITranslationRepository
 {
-    private readonly InMemoryContext _dbContext;
+    private readonly ApplicationDbContext _dbContext;
+    private readonly ICacheService _cache;
+    private readonly IEventBus _eventBus;
 
-    public TranslationRepository(InMemoryContext dbContext)
+    public TranslationRepository(ApplicationDbContext dbContext, ICacheService cache, IEventBus eventBus)
     {
         _dbContext = dbContext;
-    }
-    
-    public async Task<Translation> Add(Translation translation)
-    {
-        await _dbContext.Translations.AddAsync(translation);
-        await _dbContext.SaveChangesAsync();
-
-        return translation;
+        _cache = cache;
+        _eventBus = eventBus;
     }
 
-    public async Task<Translation?> Get(Guid id, string language)
+    public async Task AddAsync(Translation translation, CancellationToken cancellationToken = default)
     {
+        await _dbContext.Translations.AddAsync(translation, cancellationToken);
+        await _eventBus.PublishAsync(new TranslationUpsertIntegrationEvent(Guid.NewGuid(), translation), cancellationToken);
+    }
+
+    public async Task<bool> AlreadyExistsAsync(Guid id, string language, CancellationToken cancellationToken = default)
+    {
+        var languageAsDomain = new Language(language);
         return await _dbContext.Translations
-            .AsNoTracking()
-            .Where(x => x.Id == id && x.LanguageTo == language)
-            .FirstOrDefaultAsync();
+            .AnyAsync(x => x.Id == id && x.LanguageTo == languageAsDomain, cancellationToken);
+
+        // return await _cache.GetAsync<TranslationResponse>($"translation/{id}/{language}", cancellationToken) is not null;
     }
 }

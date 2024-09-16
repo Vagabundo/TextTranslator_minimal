@@ -6,12 +6,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\MinimalTranslator.Core\MinimalTranslator.Domain\MinimalTranslator.Domain.csproj" />
-    
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.2" />
+  <ItemGroup>  
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.2" />  
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.6" />  
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.6" />  
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\MinimalTranslator.Core\MinimalTranslator.Application\MinimalTranslator.Application.csproj" />
   </ItemGroup>
 
 </Project>
