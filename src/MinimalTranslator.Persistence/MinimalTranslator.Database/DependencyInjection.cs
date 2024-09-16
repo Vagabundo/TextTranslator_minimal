@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MinimalTranslator.Application.Abstractions.Data;
+using MinimalTranslator.Application.Abstractions.Events;
 using MinimalTranslator.Database.Abstractions;
 using MinimalTranslator.Database.Cache;
 using MinimalTranslator.Database.Data;
+using MinimalTranslator.Database.Events;
 using MinimalTranslator.Database.Repositories;
 using MinimalTranslator.Domain.Translations;
 
@@ -16,6 +18,7 @@ public static class DependencyInjection
     {
         services.AddDatabase(configuration);
         services.AddRedisCache(configuration);
+        services.AddInternalEventBus();
 
         return services;
     }
@@ -40,6 +43,15 @@ public static class DependencyInjection
         services.AddDbContextPool<IApplicationDbContext, ApplicationDbContext>(options => {
             options.UseNpgsql(connectionString);
         });
+
+        return services;
+    }
+
+    internal static IServiceCollection AddInternalEventBus(this IServiceCollection services)
+    {
+        services.AddSingleton<InMemoryTranslationMessageQueue>();
+        services.AddSingleton<IEventBus, EventBus>();
+        services.AddHostedService<TranslationEventProcessorJob>();
 
         return services;
     }
